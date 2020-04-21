@@ -1,4 +1,4 @@
-package br.com.boasmat.springboot;
+package br.com.boasmat.springboot.annotations;
 
 public interface Animal {
 
