@@ -11,7 +11,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 @Repository
-public class RepositoryClientes {
+public class JdbcTemplateCliente {
 
     private static String UPDATE = "UPDATE CLIENTE SET NOME = ? WHERE ID = ?";
     private static String INSERT = "INSERT INTO CLIENTE (NOME) VALUES (?)";
