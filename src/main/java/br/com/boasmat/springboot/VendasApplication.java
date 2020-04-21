@@ -25,7 +25,7 @@ public class VendasApplication {
             clientes.save(new Cliente("Matheus"));
             clientes.save(new Cliente("Outro Cliente"));
 
-            boolean existe = clientes.existsByNomeLike( "Matheus");
+            boolean existe = clientes.existsByNome( "Matheus");
             System.out.println("Existe um cliente com o nome Matheus?: " + existe);
 
 

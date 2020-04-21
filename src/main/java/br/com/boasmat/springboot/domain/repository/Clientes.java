@@ -9,12 +9,12 @@ import java.util.List;
 public interface Clientes extends JpaRepository<Cliente, Integer> {
     //query methods
     List<Cliente> findByNomeLike(String nome);
-
     List<Cliente> findByNomeOrIdOrderById(String nome, Integer id);
-
     Cliente findOneByNome(String nome);
+    boolean existsByNome(String nome);
 
-    boolean existsByNomeLike(String nome);
+
+
 
 
 
