@@ -1,12 +1,18 @@
 package br.com.boasmat.springboot.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.Set;
 
 @Entity
 @Table(name = "Cliente")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Cliente {
 
     @Id
@@ -17,52 +23,17 @@ public class Cliente {
     @Column(name = "nome", length = 100)
     private String nome;
 
+    @Column(name = "cpf", length = 11)
+    private String cpf;
+
+
     @OneToMany(mappedBy = "cliente", fetch = FetchType.LAZY) // EAGER vem com os pedidos
     // lazy n retorna os pedidos
     @JsonIgnore
     private Set<Pedido> pedidos;
 
-    public Cliente() {
-    }
-
-    public Cliente(String nome) {
-        this.nome = nome;
-    }
-
     public Cliente(Integer id, String nome) {
         this.id = id;
         this.nome = nome;
-    }
-
-    public Set<Pedido> getPedidos() {
-        return pedidos;
-    }
-
-    public void setPedidos(Set<Pedido> pedidos) {
-        this.pedidos = pedidos;
-    }
-
-    @Override
-    public String toString() {
-        return "Cliente{" +
-                "id=" + id +
-                ", nome='" + nome + '\'' +
-                '}';
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 }

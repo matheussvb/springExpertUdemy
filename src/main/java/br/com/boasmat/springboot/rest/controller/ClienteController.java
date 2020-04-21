@@ -1,65 +1,101 @@
 package br.com.boasmat.springboot.rest.controller;
 
 import br.com.boasmat.springboot.domain.entity.Cliente;
-import br.com.boasmat.springboot.domain.repository.ClientesRespository;
+import br.com.boasmat.springboot.domain.repository.ClienteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Optional;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/clientes")
 public class ClienteController {
 
     @Autowired
-    private ClientesRespository clientesRespository;
+    private ClienteRepository clientesRespository;
 
-    @ResponseBody
     @GetMapping("/{id}")
-    public ResponseEntity getClienteById(@PathVariable("id") Integer id) {
-        Optional<Cliente> cliente = clientesRespository.findById(id);
-        if (cliente.isPresent()) {
-            HttpHeaders httpHeaders = new HttpHeaders();
-            httpHeaders.set("Authorization", "token");
-            ResponseEntity<Cliente> responseEntity =
-                    new ResponseEntity<Cliente>(cliente.get(), httpHeaders, HttpStatus.OK);
+    public Cliente getClienteById(@PathVariable("id") Integer id) {
+        return clientesRespository.findById(id)
+                .orElseThrow(() ->
+                        new ResponseStatusException(HttpStatus.NOT_FOUND,
+                                "Cliente não encontrado"));
 
-            return ResponseEntity.ok(cliente.get());
-        }
-        return ResponseEntity.notFound().build();
+
+//        Optional<Cliente> cliente = clientesRespository.findById(id);
+//        if (cliente.isPresent()) {
+//            HttpHeaders httpHeaders = new HttpHeaders();
+//            httpHeaders.set("Authorization", "token");
+//            ResponseEntity<Cliente> responseEntity =
+//                    new ResponseEntity<Cliente>(cliente.get(), httpHeaders, HttpStatus.OK);
+//
+//            return ResponseEntity.ok(cliente.get());
+//        }
+//        return ResponseEntity.notFound().build();
     }
 
+
     @PostMapping
-    @ResponseBody
-    public ResponseEntity save(@RequestBody Cliente cliente) {
-        Cliente clienteSave = clientesRespository.save(cliente);
-        return ResponseEntity.ok(clienteSave);
+    @ResponseStatus(HttpStatus.CREATED) // 2o1
+    public Cliente save(@RequestBody Cliente cliente) {
+        return clientesRespository.save(cliente);
     }
 
     @DeleteMapping("/{id}")
-    @ResponseBody
-    public ResponseEntity delete(@PathVariable("id") Integer id) {
-        Optional<Cliente> cliente = clientesRespository.findById(id);
-        if (cliente.isPresent()) {
-            clientesRespository.delete(cliente.get());
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.notFound().build();
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable("id") Integer id) {
+        clientesRespository.findById(id)
+                .map(cliente -> {
+                    clientesRespository.delete(cliente);
+                    return cliente;
+                }).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                "Cliente não encontrado"));
     }
 
-    @ResponseBody
     @PutMapping("/{id}")
-    public ResponseEntity upDate(@PathVariable("id") Integer id, @RequestBody Cliente cliente) {
-        return clientesRespository
-                .findById(id).map(clienteExistente -> { //procura um cliente pelo id
-                    cliente.setId(clienteExistente.getId());// pega o id antigo e seta no novo cliente "atualizando" ele
-                    clientesRespository.save(cliente); // salva o cliente
-                    return ResponseEntity.noContent().build(); // o map precisa retornar o tipo do metodo
-                }).orElseGet(() -> ResponseEntity.notFound().build()); // se não encontra então retorna 404
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void upDate(@PathVariable("id") Integer id, @RequestBody Cliente cliente) {
+        clientesRespository.findById(id)
+                .map(clienteExistente -> {
+                    cliente.setId(clienteExistente.getId());
+                    clientesRespository.save(cliente);
+                    return clienteExistente;
+                }).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                "Cliente não encontrado"));
+//        return clientesRespository
+//                .findById(id).map(clienteExistente -> { //procura um cliente pelo id
+//                    cliente.setId(clienteExistente.getId());// pega o id antigo e seta no novo cliente "atualizando" ele
+//                    clientesRespository.save(cliente); // salva o cliente
+//                    return ResponseEntity.noContent().build(); // o map precisa retornar o tipo do metodo
+//                }).orElseGet(() -> ResponseEntity.notFound().build()); // se não encontra então retorna 404
     }
+
+    @GetMapping
+    public List<Cliente> find(Cliente filtro) {
+        ExampleMatcher matcher = ExampleMatcher //encontra os clientes pelas propriedades
+                .matching()
+                .withIgnoreCase()
+                .withStringMatcher(
+                        ExampleMatcher.StringMatcher.CONTAINING);
+        Example example = Example.of(filtro, matcher); // pega as propriedades populadas
+        return clientesRespository.findAll(example);
+    }
+
+//    @GetMapping
+//    public ResponseEntity find(Cliente filtro) {
+//        ExampleMatcher matcher = ExampleMatcher //encontra os clientes pelas propriedades
+//                .matching()
+//                .withIgnoreCase()
+//                .withStringMatcher(
+//                        ExampleMatcher.StringMatcher.CONTAINING);
+//        Example example = Example.of(filtro, matcher); // pega as propriedades populadas
+//        List<Cliente> lista = clientesRespository.findAll(example);
+//        return ResponseEntity.ok(lista);
+//    }
 
 
 }
