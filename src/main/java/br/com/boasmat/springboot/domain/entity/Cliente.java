@@ -1,6 +1,7 @@
 package br.com.boasmat.springboot.domain.entity;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 @Table(name = "Cliente")
@@ -8,11 +9,15 @@ public class Cliente {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name= "id")
+    @Column(name = "id")
     private Integer id;
 
     @Column(name = "nome", length = 100)
     private String nome;
+
+    @OneToMany(mappedBy = "cliente", fetch = FetchType.LAZY) // EAGER vem com os pedidos
+    // lazy n retorna os pedidos
+    private Set<Pedido> pedidos;
 
     public Cliente() {
     }
@@ -24,6 +29,14 @@ public class Cliente {
     public Cliente(Integer id, String nome) {
         this.id = id;
         this.nome = nome;
+    }
+
+    public Set<Pedido> getPedidos() {
+        return pedidos;
+    }
+
+    public void setPedidos(Set<Pedido> pedidos) {
+        this.pedidos = pedidos;
     }
 
     @Override

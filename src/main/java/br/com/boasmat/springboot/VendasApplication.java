@@ -1,18 +1,27 @@
 package br.com.boasmat.springboot;
 
 import br.com.boasmat.springboot.domain.entity.Cliente;
-import br.com.boasmat.springboot.domain.repository.Clientes;
+import br.com.boasmat.springboot.domain.entity.Pedido;
+import br.com.boasmat.springboot.domain.repository.ClientesRespository;
+import br.com.boasmat.springboot.domain.repository.PedidosRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.List;
+
 @SpringBootApplication
 public class VendasApplication {
 
     @Autowired
-    private Clientes clientes;
+    private ClientesRespository clientesRespository;
+
+    @Autowired
+    private PedidosRepository pedidosRepository;
 
     public static void main(String[] args) {
         SpringApplication.run(VendasApplication.class, args);
@@ -22,14 +31,27 @@ public class VendasApplication {
     public CommandLineRunner executar() {
         return args -> {
             System.out.println("Salvando Clientes");
-            clientes.save(new Cliente("Matheus"));
-            clientes.save(new Cliente("Outro Cliente"));
-
-            boolean existe = clientes.existsByNome( "Matheus");
-            System.out.println("Existe um cliente com o nome Matheus?: " + existe);
+            clientesRespository.save(new Cliente("Matheus"));
+            Cliente fulano = new Cliente("Fulano");
+            clientesRespository.save(fulano);
 
 
+            Pedido p = new Pedido();
+            p.setCliente(fulano);
+            p.setDataPedido(LocalDate.now());
+            p.setTotal(BigDecimal.valueOf(100));
+
+            pedidosRepository.save(p);
 //
+//            Cliente clienteFetchPedidos = clientesRespository.findClienteFetchPedidos(fulano.getId());
+//            System.out.println(clienteFetchPedidos.getPedidos());
+
+            List<Pedido> pedidoFulano = pedidosRepository.findByCliente(fulano);
+            pedidoFulano.forEach(fulanoPedido -> {
+                System.out.println(fulanoPedido);
+            });
+
+            //
 //            System.out.println("Atualizando Clientes");
 //            listClientes.forEach(cli -> {
 //                cli.setNome(cli.getNome() + " atualizado. ");
