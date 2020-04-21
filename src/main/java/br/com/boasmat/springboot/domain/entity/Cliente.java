@@ -1,5 +1,7 @@
 package br.com.boasmat.springboot.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.Set;
 
@@ -17,6 +19,7 @@ public class Cliente {
 
     @OneToMany(mappedBy = "cliente", fetch = FetchType.LAZY) // EAGER vem com os pedidos
     // lazy n retorna os pedidos
+    @JsonIgnore
     private Set<Pedido> pedidos;
 
     public Cliente() {
