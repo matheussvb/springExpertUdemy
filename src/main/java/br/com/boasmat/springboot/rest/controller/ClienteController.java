@@ -50,6 +50,16 @@ public class ClienteController {
         return ResponseEntity.notFound().build();
     }
 
-    
+    @ResponseBody
+    @PutMapping("/{id}")
+    public ResponseEntity upDate(@PathVariable("id") Integer id, @RequestBody Cliente cliente) {
+        return clientesRespository
+                .findById(id).map(clienteExistente -> { //procura um cliente pelo id
+                    cliente.setId(clienteExistente.getId());// pega o id antigo e seta no novo cliente "atualizando" ele
+                    clientesRespository.save(cliente); // salva o cliente
+                    return ResponseEntity.noContent().build(); // o map precisa retornar o tipo do metodo
+                }).orElseGet(() -> ResponseEntity.notFound().build()); // se não encontra então retorna 404
+    }
+
 
 }
