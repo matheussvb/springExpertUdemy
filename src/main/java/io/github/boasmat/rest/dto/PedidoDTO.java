@@ -13,12 +13,8 @@ import java.util.List;
 @NoArgsConstructor
 public class PedidoDTO {
 
-    @NotNull(message = "{campo.codigo-cliente.obrigatorio}")
     private Integer cliente;
-
-    @NotNull(message = "{campo.total-pedido.obrigatorio}")
     private BigDecimal total;
-
-    private List<ItemPedidoDTO> items;
+    private List<ItemPedidoDTO> itens;
 
 }

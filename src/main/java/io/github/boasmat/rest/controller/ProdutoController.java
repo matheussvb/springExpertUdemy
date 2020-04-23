@@ -1,7 +1,7 @@
 package io.github.boasmat.rest.controller;
 
 import io.github.boasmat.domain.entity.Produto;
-import io.github.boasmat.domain.repository.Produtos;
+import io.github.boasmat.domain.repository.ProdutoRepository;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.http.HttpStatus;
@@ -17,9 +17,9 @@ import static org.springframework.http.HttpStatus.*;
 @RequestMapping("/api/produtos")
 public class ProdutoController {
 
-    private Produtos repository;
+    private ProdutoRepository repository;
 
-    public ProdutoController(Produtos repository) {
+    public ProdutoController(ProdutoRepository repository) {
         this.repository = repository;
     }
 

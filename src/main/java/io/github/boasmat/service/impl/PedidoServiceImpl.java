@@ -5,10 +5,10 @@ import io.github.boasmat.domain.entity.ItemPedido;
 import io.github.boasmat.domain.entity.Pedido;
 import io.github.boasmat.domain.entity.Produto;
 import io.github.boasmat.domain.enums.StatusPedido;
-import io.github.boasmat.domain.repository.Clientes;
-import io.github.boasmat.domain.repository.ItemsPedido;
-import io.github.boasmat.domain.repository.Pedidos;
-import io.github.boasmat.domain.repository.Produtos;
+import io.github.boasmat.domain.repository.ClienteRepository;
+import io.github.boasmat.domain.repository.ItemPedidoRepository;
+import io.github.boasmat.domain.repository.PedidoRepository;
+import io.github.boasmat.domain.repository.ProdutoRepository;
 import io.github.boasmat.exception.PedidoNaoEncontradoException;
 import io.github.boasmat.exception.RegraNegocioException;
 import io.github.boasmat.rest.dto.ItemPedidoDTO;
@@ -27,10 +27,10 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class PedidoServiceImpl implements PedidoService {
 
-    private final Pedidos repository;
-    private final Clientes clientesRepository;
-    private final Produtos produtosRepository;
-    private final ItemsPedido itemsPedidoRepository;
+    private final PedidoRepository pedidoRepository;
+    private final ClienteRepository clientesRepository;
+    private final ProdutoRepository produtosRepository;
+    private final ItemPedidoRepository itensPedidoRepository;
 
     @Override
     @Transactional
@@ -46,30 +46,29 @@ public class PedidoServiceImpl implements PedidoService {
         pedido.setCliente(cliente);
         pedido.setStatus(StatusPedido.REALIZADO);
 
-        List<ItemPedido> itemsPedido = converterItems(pedido, dto.getItems());
-        repository.save(pedido);
-        itemsPedidoRepository.saveAll(itemsPedido);
+        List<ItemPedido> itemsPedido = converterItens(pedido, dto.getItens());
+        pedidoRepository.save(pedido);
+        itensPedidoRepository.saveAll(itemsPedido);
         pedido.setItens(itemsPedido);
         return pedido;
     }
 
     @Override
     public Optional<Pedido> obterPedidoCompleto(Integer id) {
-        return repository.findByIdFetchItens(id);
+        return pedidoRepository.findByIdFetchItens(id);
     }
 
-    @Override
     @Transactional
     public void atualizaStatus( Integer id, StatusPedido statusPedido ) {
-        repository
+        pedidoRepository
                 .findById(id)
                 .map( pedido -> {
                     pedido.setStatus(statusPedido);
-                    return repository.save(pedido);
+                    return pedidoRepository.save(pedido);
                 }).orElseThrow(() -> new PedidoNaoEncontradoException() );
     }
 
-    private List<ItemPedido> converterItems(Pedido pedido, List<ItemPedidoDTO> items){
+    private List<ItemPedido> converterItens(Pedido pedido, List<ItemPedidoDTO> items){
         if(items.isEmpty()){
             throw new RegraNegocioException("Não é possível realizar um pedido sem items.");
         }

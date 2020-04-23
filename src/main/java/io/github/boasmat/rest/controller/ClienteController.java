@@ -1,7 +1,7 @@
 package io.github.boasmat.rest.controller;
 
 import io.github.boasmat.domain.entity.Cliente;
-import io.github.boasmat.domain.repository.Clientes;
+import io.github.boasmat.domain.repository.ClienteRepository;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.http.HttpStatus;
@@ -15,9 +15,9 @@ import java.util.List;
 @RequestMapping("/api/clientes")
 public class ClienteController {
 
-    private Clientes clientes;
+    private ClienteRepository clientes;
 
-    public ClienteController(Clientes clientes) {
+    public ClienteController(ClienteRepository clientes) {
 
         this.clientes = clientes;
     }
