@@ -2,6 +2,8 @@ package io.github.boasmat.rest.controller;
 
 import io.github.boasmat.domain.entity.ItemPedido;
 import io.github.boasmat.domain.entity.Pedido;
+import io.github.boasmat.domain.enums.StatusPedido;
+import io.github.boasmat.rest.dto.AtualizacaoStatusPedidoDTO;
 import io.github.boasmat.rest.dto.InformacaoItemPedidoDTO;
 import io.github.boasmat.rest.dto.InformacoesPedidoDTO;
 import io.github.boasmat.rest.dto.PedidoDTO;
@@ -58,6 +60,13 @@ public class PedidoController {
                 .build();
 
 
+    }
+
+    @PatchMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void updateStatus(@PathVariable("id") Integer id, @RequestBody AtualizacaoStatusPedidoDTO dto) {
+        String novoStatus = dto.getNovoStatus();
+        service.atualizaStatus(id, StatusPedido.valueOf(novoStatus));
     }
 
     private List<InformacaoItemPedidoDTO> converter(List<ItemPedido> itens) {
