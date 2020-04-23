@@ -15,16 +15,16 @@ import java.util.List;
 @RequestMapping("/api/clientes")
 public class ClienteController {
 
-    private ClienteRepository clientes;
+    private ClienteRepository cliente;
 
     public ClienteController(ClienteRepository clientes) {
 
-        this.clientes = clientes;
+        this.cliente = clientes;
     }
 
     @GetMapping("{id}")
     public Cliente getClienteById(@PathVariable Integer id) {
-        return clientes
+        return cliente
                 .findById(id)
                 .orElseThrow(() ->
                         new ResponseStatusException(HttpStatus.NOT_FOUND,
@@ -34,15 +34,15 @@ public class ClienteController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Cliente save(@RequestBody @Valid Cliente cliente) {
-        return clientes.save(cliente);
+        return this.cliente.save(cliente);
     }
 
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Integer id) {
-        clientes.findById(id)
+        cliente.findById(id)
                 .map(cliente -> {
-                    clientes.delete(cliente);
+                    this.cliente.delete(cliente);
                     return cliente;
                 })
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
@@ -54,11 +54,11 @@ public class ClienteController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void update(@PathVariable Integer id,
                        @RequestBody @Valid Cliente cliente) {
-        clientes
+        this.cliente
                 .findById(id)
                 .map(clienteExistente -> {
                     cliente.setId(clienteExistente.getId());
-                    clientes.save(cliente);
+                    this.cliente.save(cliente);
                     return clienteExistente;
                 }).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
                 "Cliente não encontrado"));
@@ -73,7 +73,7 @@ public class ClienteController {
                         ExampleMatcher.StringMatcher.CONTAINING);
 
         Example example = Example.of(filtro, matcher);
-        return clientes.findAll(example);
+        return cliente.findAll(example);
     }
 
 }
