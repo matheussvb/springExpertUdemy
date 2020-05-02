@@ -15,14 +15,14 @@ import java.util.List;
 @NoArgsConstructor
 public class PedidoDTO {
 
-    @NotNull(message = "Informe o nome do cliente")
+    @NotNull(message = "{campo.codigo-cliente.obrigatorio}")
     private Integer cliente;
 
-    @NotNull(message = "Campo total do pedido é obrigatório")
+    @NotNull(message = "{campo.total-pedido.obrigatorio}")
     @TotalMaiorQue100
     private BigDecimal total;
 
-    @NotEmptyList(message = "Pedido não pode ser realizado sem itens")
+    @NotEmptyList(message = "{campo.items-pedido.obrigatorio}")
     private List<ItemPedidoDTO> itens;
 
 }
