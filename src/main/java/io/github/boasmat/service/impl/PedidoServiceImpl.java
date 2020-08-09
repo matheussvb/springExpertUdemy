@@ -47,6 +47,7 @@ public class PedidoServiceImpl implements PedidoService {
         pedido.setStatus(StatusPedido.REALIZADO);
 
         List<ItemPedido> itemsPedido = converterItens(pedido, dto.getItens());
+
         pedidoRepository.save(pedido);
         itensPedidoRepository.saveAll(itemsPedido);
         pedido.setItens(itemsPedido);

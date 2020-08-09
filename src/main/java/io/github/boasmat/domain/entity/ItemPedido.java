@@ -20,7 +20,8 @@ public class ItemPedido {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "pedido_id")@JsonIgnore
+    @JoinColumn(name = "pedido_id")
+    @JsonIgnore
     private Pedido pedido;
 
     @ManyToOne
